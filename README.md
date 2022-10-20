@@ -5,6 +5,10 @@ DESCRIPTION ...
 ### PREREQUISITES 
 - NodeJS
 
+### Development Dependencies I used:
+- Typescript @types/node
+- git-commit-msg-linter
+
 ### INSTALATION
 1. Open your terminal in location that you want save the project.
 2. Clone the repo in this local.
