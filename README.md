@@ -9,8 +9,9 @@ DESCRIPTION ...
 - Typescript @types/node
 - git-commit-msg-linter
 - es linter for typescript (https://www.npmjs.com/package/eslint-config-standard-with-typescript)
-    I run this code: ```shell
-    npm install --save-dev \
+    I run this code:
+    ```sh
+     npm install --save-dev \
         typescript@\* \
         eslint@^8.0.1 \
         eslint-plugin-promise@^6.0.0 \
