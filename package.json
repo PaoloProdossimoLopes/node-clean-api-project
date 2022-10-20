@@ -4,8 +4,8 @@
   "description": "DESCRIPTION ...",
   "main": "index.js",
   "scripts": {
-    "test": "npx jest",
-    "test:staged": "npx jest"
+    "test": "npx jest --passWithNoTests --watch",
+    "test:staged": "npx jest --passWithNoTests"
   },
   "repository": {
     "type": "git",
