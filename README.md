@@ -19,6 +19,8 @@ DESCRIPTION ...
         @typescript-eslint/eslint-plugin@^5.0.0 \
         eslint-config-standard-with-typescript@latest
     ```
+- Lint-staged
+- Husky
 
 
 ### INSTALATION
