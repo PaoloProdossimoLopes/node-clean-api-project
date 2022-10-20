@@ -1,6 +1,7 @@
 import { HTTPResponse, HTTPRequest } from '../protocols/http'
 import { MissinParamsError } from '../errors/missin-params-error'
 import { badRequest } from '../helpers/http-helper'
+
 export class SignUpController {
   handle (httpRequest: HTTPRequest): HTTPResponse {
     if (!httpRequest.body.name) {
