@@ -1,21 +1,20 @@
+import { HTTPResponse, HTTPRequest } from '../protocols/http'
+import { MissinParamsError } from '../errors/missin-params-error'
+
 export class SignUpController {
-  handle (httpRequest: any): any {
+  handle (httpRequest: HTTPRequest): HTTPResponse {
     if (!httpRequest.body.name) {
       return {
         statusCode: 400,
-        body: this.makeError('nome')
+        body: new MissinParamsError('nome')
       }
     }
 
     if (!httpRequest.body.email) {
       return {
         statusCode: 400,
-        body: this.makeError('email')
+        body: new MissinParamsError('email')
       }
     }
-  }
-
-  private makeError (field: string): Error {
-    return new Error(`Missing param: ${field}`)
   }
 }
