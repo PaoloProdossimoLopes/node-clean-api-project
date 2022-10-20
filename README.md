@@ -1,27 +1,26 @@
-#  TITLE
+# 🛰️ Clean API
 DESCRIPTION ...
-
-## 🧰 Example:
-```swift
-```
 
 ## ℹ️  GETTING STARTED
 ### PREREQUISITES 
-- Swift 4+
-- Xcode 10+
+- NodeJS
 
 ### INSTALATION
 1. Open your terminal in location that you want save the project.
 2. Clone the repo in this local.
 ```sh
-git clone https://github.com/PaoloProdossimoLopes/repository-template.git
+git clone https://github.com/PaoloProdossimoLopes/node-clean-api-project.git
 ```
-3. Open the file with extension .xcodeproj inside the folder project.
+3. install dependencies using this commands
+```sh
+npm install express
+```
    
 ### RUN
 So that you can run the project follow this steps:
-1. Choose a simulator 
-2. Then click on the **COMMAND + R** keys or press the ▶︎ (icon at the top of the IDE).
+1. Open your terminal
+2. Navigate to inside at `application` folder from terminal
+2. run `node server.js` or using `nodemon server.js`
 
 
 ## 📃 License:
