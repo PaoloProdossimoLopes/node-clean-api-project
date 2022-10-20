@@ -8,6 +8,18 @@ DESCRIPTION ...
 ### Development Dependencies I used:
 - Typescript @types/node
 - git-commit-msg-linter
+- es linter for typescript (https://www.npmjs.com/package/eslint-config-standard-with-typescript)
+    I run this code: ```shell
+    npm install --save-dev \
+        typescript@\* \
+        eslint@^8.0.1 \
+        eslint-plugin-promise@^6.0.0 \
+        eslint-plugin-import@^2.25.2 \
+        eslint-plugin-n@^15.0.0 \
+        @typescript-eslint/eslint-plugin@^5.0.0 \
+        eslint-config-standard-with-typescript@latest
+    ```
+
 
 ### INSTALATION
 1. Open your terminal in location that you want save the project.
