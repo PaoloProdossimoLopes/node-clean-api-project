@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/PaoloProdossimoLopes/node-clean-api-project/issues"
   },
-  "homepage": "https://github.com/PaoloProdossimoLopes/node-clean-api-project#readme"
+  "homepage": "https://github.com/PaoloProdossimoLopes/node-clean-api-project#readme",
+  "devDependencies": {
+    "git-commit-msg-linter": "^4.2.1"
+  }
 }
