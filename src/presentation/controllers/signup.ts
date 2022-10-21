@@ -4,6 +4,7 @@ import { MissinParamsError } from '../errors/missin-params-error'
 import { badRequest } from '../helpers/http-helper'
 import { Controller } from '../protocols/controller'
 import { InvalidParamError } from '../errors/invalid-param-error'
+import { InternalServerError } from '../errors/internal-server-error'
 
 export class SignUpController implements Controller {
   private readonly emailValidator: IEmailValidator
@@ -13,16 +14,23 @@ export class SignUpController implements Controller {
   }
 
   handle (httpRequest: HTTPRequest): HTTPResponse {
-    const requiredFields = ['name', 'email', 'password', 'passwordConfirmation']
-    for (const field of requiredFields) {
-      if (!httpRequest.body[field]) {
-        return badRequest(new MissinParamsError(field))
+    try {
+      const requiredFields = ['name', 'email', 'password', 'passwordConfirmation']
+      for (const field of requiredFields) {
+        if (!httpRequest.body[field]) {
+          return badRequest(new MissinParamsError(field))
+        }
       }
-    }
 
-    const emailIsValid = this.emailValidator.isValid(httpRequest.body.email)
-    if (!emailIsValid) {
-      return badRequest(new InvalidParamError('email'))
+      const emailIsValid = this.emailValidator.isValid(httpRequest.body.email)
+      if (!emailIsValid) {
+        return badRequest(new InvalidParamError('email'))
+      }
+    } catch (error) {
+      return {
+        statusCode: 500,
+        body: new InternalServerError()
+      }
     }
   }
 }
