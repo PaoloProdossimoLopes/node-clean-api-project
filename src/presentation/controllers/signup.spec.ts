@@ -2,6 +2,7 @@ import { SignUpController } from './signup'
 import { MissinParamsError } from '../errors/missin-params-error'
 import { InvalidParamError } from '../errors/invalid-param-error'
 import { IEmailValidator } from '../protocols/email-validator'
+import { InternalServerError } from '../errors/internal-server-error'
 
 describe('SignUpController', () => {
   test('Should return 400 if no `nome` is provided', () => {
@@ -89,14 +90,36 @@ describe('SignUpController', () => {
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new InvalidParamError('email'))
   })
+
+  test('Should response with statusCode 500 when Validator give us a throws with InternalServerError type', () => {
+    const { sut, emailValidator } = makeSUT()
+    emailValidator.isValidThrows = new InternalServerError()
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_invalid_email',
+        password: 'any_password',
+        passwordConfirmation: 'any_password'
+      }
+    }
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toBeInstanceOf(InternalServerError)
+  })
 })
 
 class EmailValidatorStub implements IEmailValidator {
   isValidExpected: boolean = true
   isValidEmailSpy?: string
+  isValidThrows?: Error
 
   isValid (email: string): boolean {
     this.isValidEmailSpy = email
+
+    if (this.isValidThrows) {
+      throw this.isValidThrows
+    }
+
     return this.isValidExpected
   }
 }
