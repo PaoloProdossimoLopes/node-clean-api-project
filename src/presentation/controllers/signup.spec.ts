@@ -1,8 +1,6 @@
 import { SignUpController } from './signup'
-import { MissinParamsError } from '../errors/missin-params-error'
-import { InvalidParamError } from '../errors/invalid-param-error'
+import { MissinParamsError, InternalServerError, InvalidParamError } from '../errors'
 import { IEmailValidator } from '../protocols/email-validator'
-import { InternalServerError } from '../errors/internal-server-error'
 
 describe('SignUpController', () => {
   test('Should return 400 if no `nome` is provided', () => {
