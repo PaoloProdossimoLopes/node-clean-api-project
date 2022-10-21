@@ -62,6 +62,20 @@ describe('SignUpController', () => {
 
   test('Should return 400 if an invalid email is provided', () => {
     const { sut, emailValidator } = makeSUT()
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_invalid_email',
+        password: 'any_password',
+        passwordConfirmation: 'any_password'
+      }
+    }
+    sut.handle(httpRequest)
+    expect(emailValidator.isValidEmailSpy).toEqual('any_invalid_email')
+  })
+
+  test('Should call `isValid` with correct email', () => {
+    const { sut, emailValidator } = makeSUT()
     emailValidator.isValidExpected = false
     const httpRequest = {
       body: {
@@ -79,8 +93,10 @@ describe('SignUpController', () => {
 
 class EmailValidatorStub implements IEmailValidator {
   isValidExpected: boolean = true
+  isValidEmailSpy?: string
 
   isValid (email: string): boolean {
+    this.isValidEmailSpy = email
     return this.isValidExpected
   }
 }
