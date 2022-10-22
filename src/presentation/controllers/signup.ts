@@ -15,14 +15,14 @@ export class SignUpController implements Controller {
   }
 
   // @Internals
-  handle (httpRequest: HTTPRequest): HTTPResponse {
+  async handle (httpRequest: HTTPRequest): Promise<HTTPResponse> {
     try {
-      return this.onHandler(httpRequest)
+      return await this.onHandler(httpRequest)
     } catch (error) { return internalServerError() }
   }
 
   // @Helpers
-  private onHandler (request: HTTPRequest): HTTPResponse {
+  private async onHandler (request: HTTPRequest): Promise<HTTPResponse> {
     const missingParamError = this.checkRequiredFields(request.body)
     if (missingParamError) {
       return badRequest(missingParamError)
@@ -38,7 +38,7 @@ export class SignUpController implements Controller {
     }
 
     const shortHandSyntaxData = { name, email, password }
-    const accountModel = this.addAccount.add(shortHandSyntaxData)
+    const accountModel = await this.addAccount.add(shortHandSyntaxData)
     return ok(accountModel)
   }
 

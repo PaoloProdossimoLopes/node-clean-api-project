@@ -5,7 +5,7 @@ import { IAddAccount, AddAccountModel } from '../../domain/use-cases/add-account
 import { IAccountModel } from '../../domain/models/account-model'
 
 describe('SignUpController', () => {
-  test('Should return 400 if no `nome` is provided', () => {
+  test('Should return 400 if no `nome` is provided', async () => {
     const { sut } = makeSUT()
     const httpRequest = {
       body: {
@@ -14,12 +14,12 @@ describe('SignUpController', () => {
         passwordConfirmation: 'any_password'
       }
     }
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new MissinParamsError('name'))
   })
 
-  test('Should return 400 if no `email` is provided', () => {
+  test('Should return 400 if no `email` is provided', async () => {
     const { sut } = makeSUT()
     const httpRequest = {
       body: {
@@ -28,12 +28,12 @@ describe('SignUpController', () => {
         passwordConfirmation: 'any_password'
       }
     }
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new MissinParamsError('email'))
   })
 
-  test('Should return 400 if no `password` is provided', () => {
+  test('Should return 400 if no `password` is provided', async () => {
     const { sut } = makeSUT()
     const httpRequest = {
       body: {
@@ -42,12 +42,12 @@ describe('SignUpController', () => {
         passwordConfirmation: 'any_password'
       }
     }
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new MissinParamsError('password'))
   })
 
-  test('Should return 400 if no `passwordConfirmation` is provided', () => {
+  test('Should return 400 if no `passwordConfirmation` is provided', async () => {
     const { sut } = makeSUT()
     const httpRequest = {
       body: {
@@ -56,12 +56,12 @@ describe('SignUpController', () => {
         password: 'any_pasword'
       }
     }
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new MissinParamsError('passwordConfirmation'))
   })
 
-  test('Should return 400 if an invalid email is provided', () => {
+  test('Should return 400 if an invalid email is provided', async () => {
     const { sut, emailValidator } = makeSUT()
     const httpRequest = {
       body: {
@@ -71,11 +71,11 @@ describe('SignUpController', () => {
         passwordConfirmation: 'any_password'
       }
     }
-    sut.handle(httpRequest)
+    await sut.handle(httpRequest)
     expect(emailValidator.isValidEmailSpy).toEqual('any_invalid_email')
   })
 
-  test('Should call `isValid` with correct email', () => {
+  test('Should call `isValid` with correct email', async () => {
     const { sut, emailValidator } = makeSUT()
     emailValidator.isValidExpected = false
     const httpRequest = {
@@ -86,12 +86,12 @@ describe('SignUpController', () => {
         passwordConfirmation: 'any_password'
       }
     }
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new InvalidParamError('email'))
   })
 
-  test('Should response with statusCode 500 when Validator give us a throws with InternalServerError type', () => {
+  test('Should response with statusCode 500 when Validator give us a throws with InternalServerError type', async () => {
     const { sut, emailValidator } = makeSUT()
     emailValidator.isValidThrows = new InternalServerError()
     const httpRequest = {
@@ -102,12 +102,12 @@ describe('SignUpController', () => {
         passwordConfirmation: 'any_password'
       }
     }
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toBeInstanceOf(InternalServerError)
   })
 
-  test('Should return 400 if password confirmation fails', () => {
+  test('Should return 400 if password confirmation fails', async () => {
     const { sut } = makeSUT()
     const httpRequest = {
       body: {
@@ -117,12 +117,12 @@ describe('SignUpController', () => {
         passwordConfirmation: 'any_other_password'
       }
     }
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new InvalidParamError('passwordConfirmation'))
   })
 
-  test('When all field are valid should calls `add` method with correct datas', () => {
+  test('When all field are valid should calls `add` method with correct datas', async () => {
     const { sut, addAccount } = makeSUT()
     const request = {
       body: {
@@ -132,7 +132,7 @@ describe('SignUpController', () => {
         passwordConfirmation: 'any_password'
       }
     }
-    sut.handle(request)
+    await sut.handle(request)
     expect(addAccount.addDataSpy).toEqual({
       name: request.body.name,
       email: request.body.email,
@@ -140,7 +140,7 @@ describe('SignUpController', () => {
     })
   })
 
-  test('Should response with statusCode 500 when `AddAccount` give us a throws with InternalServerError type', () => {
+  test('Should response with statusCode 500 when `AddAccount` give us a throws with InternalServerError type', async () => {
     const { sut, addAccount } = makeSUT()
     addAccount.addDataThrows = new Error('any_error')
     const httpRequest = {
@@ -151,12 +151,12 @@ describe('SignUpController', () => {
         passwordConfirmation: 'any_password'
       }
     }
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toBeInstanceOf(InternalServerError)
   })
 
-  test('Should response with statusCode 200 when `addAccount` provide valid data', () => {
+  test('Should response with statusCode 200 when `addAccount` provide valid data', async () => {
     const { sut, addAccount } = makeSUT()
     const request = {
       body: {
@@ -175,7 +175,7 @@ describe('SignUpController', () => {
     }
     addAccount.addAccountModel = expectedModel
 
-    const response = sut.handle(request)
+    const response = await sut.handle(request)
 
     expect(response.statusCode).toEqual(200)
     expect(response.body).toEqual(expectedModel)
@@ -233,13 +233,13 @@ class AddAccountStub implements IAddAccount {
     password: 'any_valid_password'
   }
 
-  add (data: AddAccountModel): IAccountModel {
+  async add (data: AddAccountModel): Promise<IAccountModel> {
     this.addDataSpy = data
 
     if (this.addDataThrows) {
-      throw this.addDataThrows
+      return new Promise((resolve, reject) => reject(this.addDataThrows))
     }
 
-    return this.addAccountModel
+    return new Promise(resolve => resolve(this.addAccountModel))
   }
 }
