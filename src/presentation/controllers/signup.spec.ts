@@ -155,6 +155,31 @@ describe('SignUpController', () => {
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toBeInstanceOf(InternalServerError)
   })
+
+  test('Should response with statusCode 200 when `addAccount` provide valid data', () => {
+    const { sut, addAccount } = makeSUT()
+    const request = {
+      body: {
+        name: 'any_name',
+        email: 'any_invalid_email',
+        password: 'any_password',
+        passwordConfirmation: 'any_password'
+      }
+    }
+
+    const expectedModel = {
+      id: 'valid_id',
+      name: request.body.name,
+      email: request.body.email,
+      password: request.body.password
+    }
+    addAccount.addAccountModel = expectedModel
+
+    const response = sut.handle(request)
+
+    expect(response.statusCode).toEqual(200)
+    expect(response.body).toEqual(expectedModel)
+  })
 })
 
 interface TestDependencies {

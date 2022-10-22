@@ -38,7 +38,11 @@ export class SignUpController implements Controller {
     }
 
     const shortHandSyntaxData = { name, email, password }
-    this.addAccount.add(shortHandSyntaxData)
+    const accountModel = this.addAccount.add(shortHandSyntaxData)
+    return {
+      statusCode: 200,
+      body: accountModel
+    }
   }
 
   private comparePasswords (password: string, confirmation: string): boolean {
