@@ -1,3 +1,9 @@
+export interface AddAccountModel {
+  name: string
+  email: string
+  password: String
+}
+
 export interface IAddAccount {
-  add(data: any): void
+  add(data: AddAccountModel): void
 }

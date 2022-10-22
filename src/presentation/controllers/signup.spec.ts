@@ -1,7 +1,7 @@
 import { SignUpController } from './signup'
 import { MissinParamsError, InternalServerError, InvalidParamError } from '../errors'
 import { IEmailValidator } from '../protocols'
-import { IAddAccount } from '../../domain/use-cases/add-account'
+import { IAddAccount, AddAccountModel } from '../../domain/use-cases/add-account'
 
 describe('SignUpController', () => {
   test('Should return 400 if no `nome` is provided', () => {
@@ -185,7 +185,7 @@ class AddAccountStub implements IAddAccount {
   addDataSpy?: any
   addDataThrows?: Error
 
-  add (data: any): void {
+  add (data: AddAccountModel): void {
     this.addDataSpy = data
 
     if (this.addDataThrows) {
