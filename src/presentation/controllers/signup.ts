@@ -10,8 +10,9 @@ export class SignUpController implements Controller {
   }
 
   handle (httpRequest: HTTPRequest): HTTPResponse {
-    try { return this.onHandler(httpRequest) }
-    catch (error) { return internalServerError() }
+    try {
+      return this.onHandler(httpRequest)
+    } catch (error) { return internalServerError() }
   }
 
   private onHandler (request: HTTPRequest): HTTPResponse {
@@ -22,14 +23,23 @@ export class SignUpController implements Controller {
 
     const emailIsValid = this.emailValidator.isValid(request.body.email)
     if (!emailIsValid) {
-      return badRequest(new InvalidParamError('email'))
+      return badRequest(new InvalidParamError(this.kEmailIsIvalid))
     }
   }
 
   private checkRequiredFields (body?: any): Error {
-    const requiredFields = ['name', 'email', 'password', 'passwordConfirmation']
+    const requiredFields = [
+      this.kName, this.kEmail,
+      this.kPassword, this.kPasswordConfirmation
+    ]
     for (const field of requiredFields) {
       if (!body[field]) { return new MissinParamsError(field) }
     }
   }
+
+  private readonly kName = 'name'
+  private readonly kEmail = 'email'
+  private readonly kPassword = 'password'
+  private readonly kPasswordConfirmation = 'passwordConfirmation'
+  private readonly kEmailIsIvalid = 'email'
 }
