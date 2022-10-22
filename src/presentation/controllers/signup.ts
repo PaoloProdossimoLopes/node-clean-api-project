@@ -1,6 +1,7 @@
 import { MissinParamsError, InvalidParamError } from '../errors'
 import { badRequest, internalServerError } from '../helpers/http-helper'
-import { IEmailValidator, Controller, HTTPResponse, HTTPRequest, IAddAccount } from '../protocols'
+import { IEmailValidator, Controller, HTTPResponse, HTTPRequest } from '../protocols'
+import { IAddAccount } from '../../domain/use-cases/add-account'
 
 export class SignUpController implements Controller {
   // @Properties
