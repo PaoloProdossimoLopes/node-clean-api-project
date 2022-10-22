@@ -119,6 +119,24 @@ describe('SignUpController', () => {
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new InvalidParamError('passwordConfirmation'))
   })
+
+  test('When all field are valid should calls `add` method with correct datas', () => {
+    const { sut, addAccount } = makeSUT()
+    const request = {
+      body: {
+        name: 'any_name',
+        email: 'any_invalid_email',
+        password: 'any_password',
+        passwordConfirmation: 'any_password'
+      }
+    }
+    sut.handle(request)
+    expect(addAccount.addDataSpy).toEqual({
+      name: request.body.name,
+      email: request.body.email,
+      password: request.body.password
+    })
+  })
 })
 
 interface TestDependencies {
