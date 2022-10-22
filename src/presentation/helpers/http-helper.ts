@@ -10,3 +10,10 @@ export const internalServerError = (): HTTPResponse => ({
   statusCode: 500,
   body: new InternalServerError()
 })
+
+export const ok = (data: any): HTTPResponse => {
+  return {
+    statusCode: 200,
+    body: data
+  }
+}

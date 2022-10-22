@@ -1,5 +1,5 @@
 import { MissinParamsError, InvalidParamError } from '../errors'
-import { badRequest, internalServerError } from '../helpers/http-helper'
+import { badRequest, internalServerError, ok } from '../helpers/http-helper'
 import { IEmailValidator, Controller, HTTPResponse, HTTPRequest } from '../protocols'
 import { IAddAccount } from '../../domain/use-cases/add-account'
 
@@ -39,10 +39,7 @@ export class SignUpController implements Controller {
 
     const shortHandSyntaxData = { name, email, password }
     const accountModel = this.addAccount.add(shortHandSyntaxData)
-    return {
-      statusCode: 200,
-      body: accountModel
-    }
+    return ok(accountModel)
   }
 
   private comparePasswords (password: string, confirmation: string): boolean {
