@@ -104,6 +104,21 @@ describe('SignUpController', () => {
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toBeInstanceOf(InternalServerError)
   })
+
+  test('Should return 400 if password confirmation fails', () => {
+    const { sut } = makeSUT()
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_invalid_email',
+        password: 'any_password',
+        passwordConfirmation: 'any_other_password'
+      }
+    }
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual(new InvalidParamError('passwordConfirmation'))
+  })
 })
 
 interface TestDependencies {
