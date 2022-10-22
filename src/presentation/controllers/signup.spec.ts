@@ -1,6 +1,6 @@
 import { SignUpController } from './signup'
 import { MissinParamsError, InternalServerError, InvalidParamError } from '../errors'
-import { IEmailValidator } from '../protocols/email-validator'
+import { IEmailValidator, IAddAccount } from '../protocols'
 
 describe('SignUpController', () => {
   test('Should return 400 if no `nome` is provided', () => {
@@ -124,14 +124,17 @@ describe('SignUpController', () => {
 interface TestDependencies {
   sut: SignUpController
   emailValidator: EmailValidatorStub
+  addAccount: AddAccountStub
 }
 
 const makeSUT = (): TestDependencies => {
   const emailValidator = makeEmailValidator()
-  const sut = new SignUpController(emailValidator)
+  const addAccount = makeAddAccount()
+  const sut = new SignUpController(emailValidator, addAccount)
   return {
     sut,
-    emailValidator
+    emailValidator,
+    addAccount
   }
 }
 
@@ -154,3 +157,20 @@ class EmailValidatorStub implements IEmailValidator {
 const makeEmailValidator = ((): EmailValidatorStub => {
   return new EmailValidatorStub()
 })
+
+const makeAddAccount = ((): AddAccountStub => {
+  return new AddAccountStub()
+})
+
+class AddAccountStub implements IAddAccount {
+  addDataSpy?: any
+  addDataThrows?: Error
+
+  add (data: any): void {
+    this.addDataSpy = data
+
+    if (this.addDataThrows) {
+      throw this.addDataThrows
+    }
+  }
+}
