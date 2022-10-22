@@ -135,9 +135,3 @@ const makeSUT = (): TestDependencies => {
     emailValidator
   }
 }
-
-// function makeSUT (isValidExpected: boolean = false): (SignUpController) {
-//   const emailvalidator = new EmailValidatorStub()
-//   emailvalidator.isValidExpected = isValidExpected
-//   return new SignUpController(emailvalidator)
-// }
