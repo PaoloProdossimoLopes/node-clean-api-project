@@ -3,18 +3,22 @@ import { badRequest, internalServerError } from '../helpers/http-helper'
 import { IEmailValidator, Controller, HTTPResponse, HTTPRequest } from '../protocols'
 
 export class SignUpController implements Controller {
+  // @Properties
   private readonly emailValidator: IEmailValidator
 
+  // @Constructor
   constructor (emailValidator: IEmailValidator) {
     this.emailValidator = emailValidator
   }
 
+  // @Internals
   handle (httpRequest: HTTPRequest): HTTPResponse {
     try {
       return this.onHandler(httpRequest)
     } catch (error) { return internalServerError() }
   }
 
+  // @Helpers
   private onHandler (request: HTTPRequest): HTTPResponse {
     const missingParamError = this.checkRequiredFields(request.body)
     if (missingParamError) {
@@ -37,6 +41,7 @@ export class SignUpController implements Controller {
     }
   }
 
+  // @Constants
   private readonly kName = 'name'
   private readonly kEmail = 'email'
   private readonly kPassword = 'password'
