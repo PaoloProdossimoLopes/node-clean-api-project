@@ -27,7 +27,7 @@ export class SignUpController implements Controller {
       return badRequest(missingParamError)
     }
 
-    const { email, password, passwordConfirmation } = request.body
+    const { name, email, password, passwordConfirmation } = request.body
     if (!this.emailValidator.isValid(email)) {
       return badRequest(new InvalidParamError(this.kEmail))
     }
@@ -35,6 +35,9 @@ export class SignUpController implements Controller {
     if (!this.comparePasswords(password, passwordConfirmation)) {
       return badRequest(new InvalidParamError(this.kPasswordConfirmation))
     }
+
+    const shortHandSyntaxData = { name, email, password }
+    this.addAccount.add(shortHandSyntaxData)
   }
 
   private comparePasswords (password: string, confirmation: string): boolean {
