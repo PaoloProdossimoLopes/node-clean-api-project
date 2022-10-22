@@ -1,14 +1,16 @@
 import { MissinParamsError, InvalidParamError } from '../errors'
 import { badRequest, internalServerError } from '../helpers/http-helper'
-import { IEmailValidator, Controller, HTTPResponse, HTTPRequest } from '../protocols'
+import { IEmailValidator, Controller, HTTPResponse, HTTPRequest, IAddAccount } from '../protocols'
 
 export class SignUpController implements Controller {
   // @Properties
   private readonly emailValidator: IEmailValidator
+  private readonly addAccount: IAddAccount
 
   // @Constructor
-  constructor (emailValidator: IEmailValidator) {
+  constructor (emailValidator: IEmailValidator, addAccount: IAddAccount) {
     this.emailValidator = emailValidator
+    this.addAccount = addAccount
   }
 
   // @Internals
