@@ -139,6 +139,22 @@ describe('SignUpController', () => {
       password: request.body.password
     })
   })
+
+  test('Should response with statusCode 500 when `AddAccount` give us a throws with InternalServerError type', () => {
+    const { sut, addAccount } = makeSUT()
+    addAccount.addDataThrows = new Error('any_error')
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_invalid_email',
+        password: 'any_password',
+        passwordConfirmation: 'any_password'
+      }
+    }
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toBeInstanceOf(InternalServerError)
+  })
 })
 
 interface TestDependencies {
