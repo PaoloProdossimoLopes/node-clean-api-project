@@ -25,14 +25,18 @@ export class SignUpController implements Controller {
       return badRequest(missingParamError)
     }
 
-    if (request.body.password !== request.body.passwordConfirmation) {
-      return badRequest(new InvalidParamError('passwordConfirmation'))
+    const { email, password, passwordConfirmation } = request.body
+    if (!this.emailValidator.isValid(email)) {
+      return badRequest(new InvalidParamError(this.kEmail))
     }
 
-    const emailIsValid = this.emailValidator.isValid(request.body.email)
-    if (!emailIsValid) {
-      return badRequest(new InvalidParamError(this.kEmailIsIvalid))
+    if (!this.comparePasswords(password, passwordConfirmation)) {
+      return badRequest(new InvalidParamError(this.kPasswordConfirmation))
     }
+  }
+
+  private comparePasswords (password: string, confirmation: string): boolean {
+    return password === confirmation
   }
 
   private checkRequiredFields (body?: any): Error {
@@ -50,5 +54,4 @@ export class SignUpController implements Controller {
   private readonly kEmail = 'email'
   private readonly kPassword = 'password'
   private readonly kPasswordConfirmation = 'passwordConfirmation'
-  private readonly kEmailIsIvalid = 'email'
 }
