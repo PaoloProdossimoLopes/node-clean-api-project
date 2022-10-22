@@ -106,6 +106,20 @@ describe('SignUpController', () => {
   })
 })
 
+interface TestDependencies {
+  sut: SignUpController
+  emailValidator: EmailValidatorStub
+}
+
+const makeSUT = (): TestDependencies => {
+  const emailValidator = makeEmailValidator()
+  const sut = new SignUpController(emailValidator)
+  return {
+    sut,
+    emailValidator
+  }
+}
+
 class EmailValidatorStub implements IEmailValidator {
   isValidExpected: boolean = true
   isValidEmailSpy?: string
@@ -122,16 +136,6 @@ class EmailValidatorStub implements IEmailValidator {
   }
 }
 
-interface TestDependencies {
-  sut: SignUpController
-  emailValidator: EmailValidatorStub
-}
-
-const makeSUT = (): TestDependencies => {
-  const emailValidator = new EmailValidatorStub()
-  const sut = new SignUpController(emailValidator)
-  return {
-    sut,
-    emailValidator
-  }
-}
+const makeEmailValidator = ((): EmailValidatorStub => {
+  return new EmailValidatorStub()
+})
