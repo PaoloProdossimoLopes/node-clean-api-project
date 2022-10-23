@@ -1,19 +1,26 @@
 import { InternalServerError } from '../errors/internal-server-error'
 import { HTTPResponse } from '../protocols/http'
 
+// @Failure Factories
 export const badRequest = (error: Error): HTTPResponse => ({
-  statusCode: 400,
+  statusCode: kInvalidParamErrorStatusCode,
   body: error
 })
 
 export const internalServerError = (): HTTPResponse => ({
-  statusCode: 500,
+  statusCode: kInternalServerErrorStatusCode,
   body: new InternalServerError()
 })
 
+// @Success factories
 export const ok = (data: any): HTTPResponse => {
   return {
-    statusCode: 200,
+    statusCode: kOkStatusCode,
     body: data
   }
 }
+
+// @Constants
+const kInvalidParamErrorStatusCode = 400
+const kInternalServerErrorStatusCode = 500
+const kOkStatusCode = 200

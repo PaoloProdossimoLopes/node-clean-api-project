@@ -9,9 +9,9 @@ describe('SignUpController', () => {
     const { sut } = makeSUT()
     const httpRequest = {
       body: {
-        email: 'any_email@mail.com',
-        password: 'any_pasword',
-        passwordConfirmation: 'any_password'
+        email: makeValidEmail(),
+        password: makeValidPassword(),
+        passwordConfirmation: makeValidPassword()
       }
     }
     const httpResponse = await sut.handle(httpRequest)
@@ -23,9 +23,9 @@ describe('SignUpController', () => {
     const { sut } = makeSUT()
     const httpRequest = {
       body: {
-        name: 'any_name',
-        password: 'any_pasword',
-        passwordConfirmation: 'any_password'
+        name: makeValidName(),
+        password: makeValidPassword(),
+        passwordConfirmation: makeValidPassword()
       }
     }
     const httpResponse = await sut.handle(httpRequest)
@@ -37,9 +37,9 @@ describe('SignUpController', () => {
     const { sut } = makeSUT()
     const httpRequest = {
       body: {
-        email: 'any_email@mail.com',
-        name: 'any_name',
-        passwordConfirmation: 'any_password'
+        email: makeValidEmail(),
+        name: makeValidName(),
+        passwordConfirmation: makeValidPassword()
       }
     }
     const httpResponse = await sut.handle(httpRequest)
@@ -51,9 +51,9 @@ describe('SignUpController', () => {
     const { sut } = makeSUT()
     const httpRequest = {
       body: {
-        email: 'any_email@mail.com',
-        name: 'any_name',
-        password: 'any_pasword'
+        email: makeValidEmail(),
+        name: makeValidName(),
+        password: makeValidPassword()
       }
     }
     const httpResponse = await sut.handle(httpRequest)
@@ -65,14 +65,14 @@ describe('SignUpController', () => {
     const { sut, emailValidator } = makeSUT()
     const httpRequest = {
       body: {
-        name: 'any_name',
-        email: 'any_invalid_email',
-        password: 'any_password',
-        passwordConfirmation: 'any_password'
+        name: makeValidName(),
+        email: makeInvalidEmail(),
+        password: makeValidPassword(),
+        passwordConfirmation: makeValidPassword()
       }
     }
     await sut.handle(httpRequest)
-    expect(emailValidator.isValidEmailSpy).toEqual('any_invalid_email')
+    expect(emailValidator.isValidEmailSpy).toEqual(makeInvalidEmail())
   })
 
   test('Should call `isValid` with correct email', async () => {
@@ -80,10 +80,10 @@ describe('SignUpController', () => {
     emailValidator.isValidExpected = false
     const httpRequest = {
       body: {
-        name: 'any_name',
-        email: 'any_invalid_email',
-        password: 'any_password',
-        passwordConfirmation: 'any_password'
+        name: makeValidName(),
+        email: makeValidEmail(),
+        password: makeValidPassword(),
+        passwordConfirmation: makeValidPassword()
       }
     }
     const httpResponse = await sut.handle(httpRequest)
@@ -96,10 +96,10 @@ describe('SignUpController', () => {
     emailValidator.isValidThrows = new InternalServerError()
     const httpRequest = {
       body: {
-        name: 'any_name',
-        email: 'any_invalid_email',
-        password: 'any_password',
-        passwordConfirmation: 'any_password'
+        name: makeValidName(),
+        email: makeInvalidEmail(),
+        password: makeValidPassword(),
+        passwordConfirmation: makeValidPassword()
       }
     }
     const httpResponse = await sut.handle(httpRequest)
@@ -111,10 +111,10 @@ describe('SignUpController', () => {
     const { sut } = makeSUT()
     const httpRequest = {
       body: {
-        name: 'any_name',
-        email: 'any_invalid_email',
-        password: 'any_password',
-        passwordConfirmation: 'any_other_password'
+        name: makeValidName(),
+        email: makeValidEmail(),
+        password: makeValidPassword(),
+        passwordConfirmation: makeInvalidPassword()
       }
     }
     const httpResponse = await sut.handle(httpRequest)
@@ -126,10 +126,10 @@ describe('SignUpController', () => {
     const { sut, addAccount } = makeSUT()
     const request = {
       body: {
-        name: 'any_name',
-        email: 'any_invalid_email',
-        password: 'any_password',
-        passwordConfirmation: 'any_password'
+        name: makeValidName(),
+        email: makeValidEmail(),
+        password: makeValidPassword(),
+        passwordConfirmation: makeValidPassword()
       }
     }
     await sut.handle(request)
@@ -145,10 +145,10 @@ describe('SignUpController', () => {
     addAccount.addDataThrows = new Error('any_error')
     const httpRequest = {
       body: {
-        name: 'any_name',
-        email: 'any_invalid_email',
-        password: 'any_password',
-        passwordConfirmation: 'any_password'
+        name: makeValidName(),
+        email: makeValidEmail(),
+        password: makeValidPassword(),
+        passwordConfirmation: makeValidPassword()
       }
     }
     const httpResponse = await sut.handle(httpRequest)
@@ -160,15 +160,15 @@ describe('SignUpController', () => {
     const { sut, addAccount } = makeSUT()
     const request = {
       body: {
-        name: 'any_name',
-        email: 'any_invalid_email',
-        password: 'any_password',
-        passwordConfirmation: 'any_password'
+        name: makeValidName(),
+        email: makeValidEmail(),
+        password: makeValidPassword(),
+        passwordConfirmation: makeValidPassword()
       }
     }
 
     const expectedModel = {
-      id: 'valid_id',
+      id: makeValidID(),
       name: request.body.name,
       email: request.body.email,
       password: request.body.password
@@ -199,6 +199,50 @@ const makeSUT = (): TestDependencies => {
   }
 }
 
+const makeEmailValidator = ((): EmailValidatorStub => {
+  return new EmailValidatorStub()
+})
+
+const makeAddAccount = ((): AddAccountStub => {
+  return new AddAccountStub()
+})
+
+// @Helepers
+const makeValidID = (): string => 'any_valid_id'
+
+const makeValidName = (): string => 'any_valid_name'
+
+const makeValidEmail = (): string => 'any_valid_email@mail.com'
+
+const makeInvalidEmail = (): string => 'any_invalid_email@mail.com'
+
+const makeValidPassword = (): string => 'any_valid_password'
+
+const makeInvalidPassword = (): string => 'any_invalid_password'
+
+// @Test Doubles
+
+class AddAccountStub implements IAddAccount {
+  addDataSpy?: any
+  addDataThrows?: Error
+  addAccountModel = {
+    id: makeValidID(),
+    name: makeValidName(),
+    email: makeValidEmail(),
+    password: makeValidPassword()
+  }
+
+  async add (data: AddAccountModel): Promise<IAccountModel> {
+    this.addDataSpy = data
+
+    if (this.addDataThrows) {
+      return new Promise((resolve, reject) => reject(this.addDataThrows))
+    }
+
+    return new Promise(resolve => resolve(this.addAccountModel))
+  }
+}
+
 class EmailValidatorStub implements IEmailValidator {
   isValidExpected: boolean = true
   isValidEmailSpy?: string
@@ -212,34 +256,5 @@ class EmailValidatorStub implements IEmailValidator {
     }
 
     return this.isValidExpected
-  }
-}
-
-const makeEmailValidator = ((): EmailValidatorStub => {
-  return new EmailValidatorStub()
-})
-
-const makeAddAccount = ((): AddAccountStub => {
-  return new AddAccountStub()
-})
-
-class AddAccountStub implements IAddAccount {
-  addDataSpy?: any
-  addDataThrows?: Error
-  addAccountModel = {
-    id: 'any_valid_id',
-    name: 'any_valid_name',
-    email: 'any_valid_email',
-    password: 'any_valid_password'
-  }
-
-  async add (data: AddAccountModel): Promise<IAccountModel> {
-    this.addDataSpy = data
-
-    if (this.addDataThrows) {
-      return new Promise((resolve, reject) => reject(this.addDataThrows))
-    }
-
-    return new Promise(resolve => resolve(this.addAccountModel))
   }
 }
