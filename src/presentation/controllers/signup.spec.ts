@@ -221,7 +221,6 @@ const makeValidPassword = (): string => 'any_valid_password'
 const makeInvalidPassword = (): string => 'any_invalid_password'
 
 // @Test Doubles
-
 class AddAccountStub implements IAddAccount {
   addDataSpy?: any
   addDataThrows?: Error
