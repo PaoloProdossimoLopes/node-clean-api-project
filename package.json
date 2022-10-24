@@ -4,7 +4,9 @@
   "description": "DESCRIPTION ...",
   "main": "index.js",
   "scripts": {
-    "test": "npx jest --passWithNoTests --watch",
+    "test": "npx jest --passWithNoTests --silent --noStackTrace",
+    "test:versobe": "npx jest --passWithNoTests",
+    "test:unit": "npm test --watch",
     "test:staged": "npx jest --passWithNoTests"
   },
   "repository": {
