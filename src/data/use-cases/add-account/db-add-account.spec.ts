@@ -9,6 +9,13 @@ describe('DBAddAccount Usecase', async () => {
     await sut.add(account)
     expect(encripter.passwordRecieved).toEqual(makeValidPassword())
   })
+
+  test('should throw if encripter throws', async () => {
+    const { sut, encripter } = makeEnviroment()
+    encripter.encryptReturns = new Promise((resolve, reject) => reject(new Error()))
+    const primise = sut.add(makeAccount())
+    await expect(primise).rejects.toThrow()
+  })
 })
 
 // @Helpers
@@ -38,9 +45,15 @@ const makeValidPassword = (): string => 'valid_password'
 // @Doubles
 class EncripterSpy implements IEncrypter {
   passwordRecieved: string
+  encryptReturns?: Promise<string>
 
   async encrypt (value: string): Promise<string> {
     this.passwordRecieved = value
+
+    if (this.encryptReturns) {
+      return this.encryptReturns
+    }
+
     return new Promise((resolve) => resolve('hashed_password'))
   }
 }
