@@ -2,7 +2,6 @@ import { AddAccountModel, IAddAccount } from '../../../domain/use-cases/add-acco
 import { IAccountModel } from '../../../domain/models/account-model'
 import { IEncrypter } from '../../protocols/encrypt'
 import { IAddAccountRepository } from '../../protocols/add-account-repository'
-import { Console } from 'console'
 
 export class DBAddAccount implements IAddAccount {
   private readonly encrypter: IEncrypter
@@ -16,7 +15,7 @@ export class DBAddAccount implements IAddAccount {
   async add (data: AddAccountModel): Promise<IAccountModel> {
     const passwordEncrypted = await this.encrypter.encrypt(data.password)
     const repositoryAccount = Object.assign({}, data, { password: passwordEncrypted })
-    await this.repository.add(repositoryAccount)
-    return new Promise(resolve => resolve(null))
+    const account = await this.repository.add(repositoryAccount)
+    return account
   }
 }
