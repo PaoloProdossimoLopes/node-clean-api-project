@@ -4,7 +4,7 @@ import { AddAccountModel } from '@/domain/use-cases/add-account'
 import { IAddAccountRepository } from '@/data/protocols/add-account-repository'
 import { IAccountModel } from '@/domain/models/account-model'
 
-describe('DBAddAccount Usecase', async () => {
+describe('DBAddAccount Usecase', () => {
   test('should call `Encripter` with correct password', async () => {
     const { sut, encripter } = makeEnviroment()
     const account = makeAccount()
