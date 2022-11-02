@@ -1,10 +1,8 @@
 import { DBAddAccount } from './db-add-account'
 import { IEncrypter } from '../../protocols/encrypt'
-import { AddAccountModel, IAddAccount } from '@/domain/use-cases/add-account'
-
-export interface IAddAccountRepository {
-  add: (account: AddAccountModel) => Promise<IAddAccount>
-}
+import { AddAccountModel } from '@/domain/use-cases/add-account'
+import { IAddAccountRepository } from '@/data/protocols/add-account-repository'
+import { IAccountModel } from '@/domain/models/account-model'
 
 describe('DBAddAccount Usecase', async () => {
   test('should call `Encripter` with correct password', async () => {
@@ -76,7 +74,7 @@ class EncripterSpy implements IEncrypter {
 class AddAccountRepositorySpy implements IAddAccountRepository {
   accountRecieved: AddAccountModel
 
-  async add (account: AddAccountModel): Promise<IAddAccount> {
+  async add (account: AddAccountModel): Promise<IAccountModel> {
     this.accountRecieved = account
     return new Promise(resolve => resolve(null))
   }
