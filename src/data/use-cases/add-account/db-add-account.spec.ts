@@ -1,6 +1,10 @@
 import { DBAddAccount } from './db-add-account'
 import { IEncrypter } from '../../protocols/encrypt'
-import { AddAccountModel } from '@/domain/use-cases/add-account'
+import { AddAccountModel, IAddAccount } from '@/domain/use-cases/add-account'
+
+export interface IAddAccountRepository {
+  add: (account: AddAccountModel) => Promise<IAddAccount>
+}
 
 describe('DBAddAccount Usecase', async () => {
   test('should call `Encripter` with correct password', async () => {
@@ -16,18 +20,29 @@ describe('DBAddAccount Usecase', async () => {
     const primise = sut.add(makeAccount())
     await expect(primise).rejects.toThrow()
   })
+
+  test('should call `AddAccountRepository` with correct object', async () => {
+    const { sut, repository } = makeEnviroment()
+    const account = makeAccount()
+    await sut.add(account)
+
+    const accountEncripted = Object.assign(account, { password: 'hashed_password' })
+    expect(repository.accountRecieved).toEqual(accountEncripted)
+  })
 })
 
 // @Helpers
 interface Envirment {
   sut: DBAddAccount
   encripter: EncripterSpy
+  repository: AddAccountRepositorySpy
 }
 
 const makeEnviroment = (): Envirment => {
   const encripter = new EncripterSpy()
-  const sut = new DBAddAccount(encripter)
-  return { sut, encripter }
+  const repository = new AddAccountRepositorySpy()
+  const sut = new DBAddAccount(encripter, repository)
+  return { sut, encripter, repository }
 }
 
 const makeAccount = (): AddAccountModel => {
@@ -55,5 +70,14 @@ class EncripterSpy implements IEncrypter {
     }
 
     return new Promise((resolve) => resolve('hashed_password'))
+  }
+}
+
+class AddAccountRepositorySpy implements IAddAccountRepository {
+  accountRecieved: AddAccountModel
+
+  async add (account: AddAccountModel): Promise<IAddAccount> {
+    this.accountRecieved = account
+    return new Promise(resolve => resolve(null))
   }
 }
