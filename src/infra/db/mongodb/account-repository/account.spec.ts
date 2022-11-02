@@ -18,14 +18,18 @@ describe('AccountMongoRepository', () => {
     await accountCollection.deleteMany({})
   })
 
-  describe('add()', () => {
+  describe('add', () => {
     test('Should return an account on success', async () => {
       const sut = new AccountMongoRepository()
-      const isValid = await sut.add({
+      const account = await sut.add({
         name: 'name',
         email: 'email',
         password: 'password'
       })
+      expect(account.id).toBeTruthy()
+      expect(account.name).toBe('name')
+      expect(account.email).toBe('email')
+      expect(account.password).toBe('password')
     })
   })
 })
