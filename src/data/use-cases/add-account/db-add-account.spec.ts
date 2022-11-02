@@ -3,8 +3,7 @@ import { IEncrypter } from '../../protocols/encrypt'
 
 describe('DBAddAccount Usecase', async () => {
   test('should call `Encripter` with correct password', async () => {
-    const encripter = new EncripterSpy()
-    const sut = new DBAddAccount(encripter)
+    const { sut, encripter } = makeEnviroment()
     const account = {
       name: 'valid_name',
       email: 'valid_email',
@@ -14,6 +13,18 @@ describe('DBAddAccount Usecase', async () => {
     expect(encripter.passwordRecieved).toEqual('valid_password')
   })
 })
+
+// @Helpers
+interface Envirment {
+  sut: DBAddAccount
+  encripter: EncripterSpy
+}
+
+const makeEnviroment = (): Envirment => {
+  const encripter = new EncripterSpy()
+  const sut = new DBAddAccount(encripter)
+  return { sut, encripter }
+}
 
 // @Doubles
 class EncripterSpy implements IEncrypter {
