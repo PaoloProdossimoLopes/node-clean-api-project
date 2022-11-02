@@ -2,6 +2,7 @@ import { AddAccountModel, IAddAccount } from '../../../domain/use-cases/add-acco
 import { IAccountModel } from '../../../domain/models/account-model'
 import { IEncrypter } from '../../protocols/encrypt'
 import { IAddAccountRepository } from '../../protocols/add-account-repository'
+import { Console } from 'console'
 
 export class DBAddAccount implements IAddAccount {
   private readonly encrypter: IEncrypter
