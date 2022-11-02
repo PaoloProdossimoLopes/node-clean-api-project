@@ -3,7 +3,7 @@ import { IAccountModel } from '../models/account-model'
 export interface AddAccountModel {
   name: string
   email: string
-  password: String
+  password: string
 }
 
 export interface IAddAccount {
