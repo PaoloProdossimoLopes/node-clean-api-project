@@ -27,6 +27,13 @@ describe('DBAddAccount Usecase', async () => {
     const accountEncripted = Object.assign(account, { password: 'hashed_password' })
     expect(repository.accountRecieved).toEqual(accountEncripted)
   })
+
+  test('should throw if addAccountRepository throws', async () => {
+    const { sut, repository } = makeEnviroment()
+    repository.throwsEpxpected = new Promise((resolve, reject) => reject(new Error()))
+    const promise = sut.add(makeAccount())
+    await expect(promise).rejects.toThrow()
+  })
 })
 
 // @Helpers
@@ -73,9 +80,15 @@ class EncripterSpy implements IEncrypter {
 
 class AddAccountRepositorySpy implements IAddAccountRepository {
   accountRecieved: AddAccountModel
+  throwsEpxpected?: Promise<IAccountModel>
 
   async add (account: AddAccountModel): Promise<IAccountModel> {
     this.accountRecieved = account
+
+    if (this.throwsEpxpected) {
+      return this.throwsEpxpected
+    }
+
     return new Promise(resolve => resolve(null))
   }
 }
