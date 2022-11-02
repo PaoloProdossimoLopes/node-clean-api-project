@@ -34,6 +34,12 @@ describe('DBAddAccount Usecase', async () => {
     const promise = sut.add(makeAccount())
     await expect(promise).rejects.toThrow()
   })
+
+  test('`add` method should give an accont from db if all process succeds', async () => {
+    const { sut } = makeEnviroment()
+    const recieved = await sut.add(makeAccount())
+    expect(recieved).toEqual(makeBDAccount())
+  })
 })
 
 // @Helpers
@@ -58,11 +64,20 @@ const makeAccount = (): AddAccountModel => {
   }
 }
 
+const makeBDAccount = (): IAccountModel => {
+  return {
+    id: 'valid_id',
+    name: makeValidName(),
+    email: makeValidEmail(),
+    password: 'hashed_password'
+  }
+}
+
 const makeValidName = (): string => 'valid_name'
 const makeValidEmail = (): string => 'valid_email'
 const makeValidPassword = (): string => 'valid_password'
 
-// @Doubles
+// @Test Doubles
 class EncripterSpy implements IEncrypter {
   passwordRecieved: string
   encryptReturns?: Promise<string>
@@ -79,7 +94,7 @@ class EncripterSpy implements IEncrypter {
 }
 
 class AddAccountRepositorySpy implements IAddAccountRepository {
-  accountRecieved: AddAccountModel
+  accountRecieved?: AddAccountModel
   throwsEpxpected?: Promise<IAccountModel>
 
   async add (account: AddAccountModel): Promise<IAccountModel> {
@@ -89,6 +104,6 @@ class AddAccountRepositorySpy implements IAddAccountRepository {
       return this.throwsEpxpected
     }
 
-    return new Promise(resolve => resolve(null))
+    return new Promise((resolve) => resolve(makeBDAccount()))
   }
 }
