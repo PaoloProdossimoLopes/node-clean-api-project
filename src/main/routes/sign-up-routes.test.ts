@@ -1,18 +1,34 @@
+import { MongoHelper } from '../../infra/db/mongodb/helpers/mongo-helper'
 import request from 'supertest'
 import app from '../config/app'
 
-describe('SignUpRoutes', () => {
-  test('should return an account on success', async () => {
-    const account = {
-      name: 'Paolo',
-      email: 'paolo.prodossimo.lopes@gmail.com',
-      password: 'senha_para_test',
-      passwordConfirmation: 'senha_para_test'
-    }
+describe('AccountMongoRepository', () => {
+  beforeAll(async () => {
+    await MongoHelper.connect(process.env.MONGO_URL)
+  })
 
-    await request(app)
-      .post('/api/signup')
-      .send(account)
-      .expect(200)
+  afterAll(async () => {
+    await MongoHelper.disconnect()
+  })
+
+  beforeEach(async () => {
+    const accountCollection = MongoHelper.getCollection('accounts')
+    await accountCollection.deleteMany({})
+  })
+
+  describe('add', () => {
+    test('should return an account on success', async () => {
+      const account = {
+        name: 'Paolo',
+        email: 'paolo.prodossimo.lopes@gmail.com',
+        password: 'senha_para_test',
+        passwordConfirmation: 'senha_para_test'
+      }
+
+      await request(app)
+        .post('/api/signup')
+        .send(account)
+        .expect(200)
+    })
   })
 })
