@@ -1,5 +1,5 @@
 import { InternalServerError } from './../../presentation/errors/internal-server-error'
-import { ILogger } from './../../presentation/protocols/logger'
+import { ILogger } from '../../data/protocols/logger'
 import { LogControllerDecorator } from './log-controller-decorator'
 import { HTTPRequest, HTTPResponse } from '@/presentation/protocols'
 import { Controller } from './../../presentation/protocols/controller'

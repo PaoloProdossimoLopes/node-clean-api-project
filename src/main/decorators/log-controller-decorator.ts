@@ -1,4 +1,4 @@
-import { ILogger } from './../../presentation/protocols/logger'
+import { ILogger } from '../../data/protocols/logger'
 import { Controller } from './../../presentation/protocols/controller'
 import { HTTPRequest, HTTPResponse } from '@/presentation/protocols'
 
