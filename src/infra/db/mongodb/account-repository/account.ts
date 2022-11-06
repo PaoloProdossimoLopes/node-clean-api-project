@@ -6,7 +6,7 @@ import { InsertOneResult } from 'mongodb'
 
 export class AccountMongoRepository implements IAddAccountRepository {
   async add (account: AddAccountModel): Promise<IAccountModel> {
-    const collection = MongoHelper.getCollection('accounts')
+    const collection = await MongoHelper.getCollection('accounts')
     const result = (await collection.insertOne(account))
     return await this.resultHandler(account, result)
   }
