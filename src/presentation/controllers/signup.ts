@@ -30,11 +30,11 @@ export class SignUpController implements Controller {
 
     const { name, email, password, passwordConfirmation } = request.body
     if (!this.emailValidator.isValid(email)) {
-      return badRequest(new InvalidParamError(this.kEmail))
+      return badRequest(new InvalidParamError(this.Constant.email))
     }
 
     if (!this.comparePasswords(password, passwordConfirmation)) {
-      return badRequest(new InvalidParamError(this.kPasswordConfirmation))
+      return badRequest(new InvalidParamError(this.Constant.passwordConfirmation))
     }
 
     const shortHandSyntaxData = { name, email, password }
@@ -48,8 +48,8 @@ export class SignUpController implements Controller {
 
   private checkRequiredFields (body?: any): Error {
     const requiredFields = [
-      this.kName, this.kEmail,
-      this.kPassword, this.kPasswordConfirmation
+      this.Constant.name, this.Constant.email,
+      this.Constant.password, this.Constant.passwordConfirmation
     ]
     for (const field of requiredFields) {
       if (!body[field]) { return new MissinParamsError(field) }
@@ -57,8 +57,10 @@ export class SignUpController implements Controller {
   }
 
   // @Constants
-  private readonly kName = 'name'
-  private readonly kEmail = 'email'
-  private readonly kPassword = 'password'
-  private readonly kPasswordConfirmation = 'passwordConfirmation'
+  private readonly Constant = {
+    name: 'name',
+    email: 'email',
+    password: 'password',
+    passwordConfirmation: 'passwordConfirmation'
+  }
 }
