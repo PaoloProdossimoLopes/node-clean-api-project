@@ -7,9 +7,9 @@ export const badRequest = (error: Error): HTTPResponse => ({
   body: error
 })
 
-export const internalServerError = (): HTTPResponse => ({
+export const internalServerError = (error: Error): HTTPResponse => ({
   statusCode: kInternalServerErrorStatusCode,
-  body: new InternalServerError()
+  body: new InternalServerError(error.stack)
 })
 
 // @Success factories

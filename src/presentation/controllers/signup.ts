@@ -18,7 +18,7 @@ export class SignUpController implements Controller {
   async handle (httpRequest: HTTPRequest): Promise<HTTPResponse> {
     try {
       return await this.onHandler(httpRequest)
-    } catch (error) { return internalServerError() }
+    } catch (error) { return internalServerError(error) }
   }
 
   // @Helpers
