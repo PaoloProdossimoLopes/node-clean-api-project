@@ -21,7 +21,7 @@ describe('MongoLoggerRespository', () => {
   test('should create an error log on success', async () => {
     const sut = new MongoLogResponsitory()
     await sut.logError('any_error')
-    const count = await collection.countDocuments()
+    const count = await countLogsSaved()
     expect(count).toBe(1)
   })
 
@@ -29,7 +29,11 @@ describe('MongoLoggerRespository', () => {
     const sut = new MongoLogResponsitory()
     await sut.logError('any_error')
     await sut.logError('any_other_error')
-    const count = await collection.countDocuments()
+    const count = await countLogsSaved()
     expect(count).toBe(2)
   })
+
+  async function countLogsSaved (): Promise<number> {
+    return await collection.countDocuments()
+  }
 })
