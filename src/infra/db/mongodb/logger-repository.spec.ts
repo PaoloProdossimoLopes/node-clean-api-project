@@ -24,4 +24,12 @@ describe('MongoLoggerRespository', () => {
     const count = await collection.countDocuments()
     expect(count).toBe(1)
   })
+
+  test('should create an error log on success twice', async () => {
+    const sut = new MongoLogResponsitory()
+    await sut.logError('any_error')
+    await sut.logError('any_other_error')
+    const count = await collection.countDocuments()
+    expect(count).toBe(2)
+  })
 })
