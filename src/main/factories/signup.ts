@@ -1,4 +1,4 @@
-import { MongoLogResponsitory } from './../../infra/db/mongodb/logger-repository';
+import { MongoLogResponsitory } from './../../infra/db/mongodb/logger-repository'
 import { Controller } from './../../presentation/protocols/controller'
 import { AccountMongoRepository } from './../../infra/db/mongodb/account-repository/account'
 import { BCryptAdapter } from './../../infra/cryptography/bcrypt-adapter'

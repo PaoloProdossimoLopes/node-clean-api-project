@@ -79,7 +79,7 @@ class ControllerSpy implements Controller {
 class LogErrorRepositorySPY implements ILogger {
   messageRecieveds: string[] = []
 
-  log (message: string): void {
+  logError (message: string): void {
     this.messageRecieveds.push(message)
   }
 }
