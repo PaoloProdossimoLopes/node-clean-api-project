@@ -79,7 +79,7 @@ class ControllerSpy implements Controller {
 class LogErrorRepositorySPY implements ILogger {
   messageRecieveds: string[] = []
 
-  logError (message: string): void {
+  async logError (message: string): Promise<void> {
     this.messageRecieveds.push(message)
   }
 }
