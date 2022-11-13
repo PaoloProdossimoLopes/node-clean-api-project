@@ -1,5 +1,5 @@
 import { InternalServerError } from './../../errors/internal-server-error';
-import { internalServerError } from './../../helpers/http-helper';
+import { internalServerError } from './../../helpers/http-helper'
 import { InvalidParamError } from './../../errors/invalid-param-error'
 import { IEmailValidator } from './../../protocols/email-validator'
 import { MissinParamsError } from './../../errors/missin-params-error'
