@@ -5,13 +5,23 @@ import { badRequest } from '../../helpers/http-helper'
 
 export class LoginController implements IController {
   async handle (httpRequest: HTTPRequest): Promise<HTTPResponse> {
-    if (!httpRequest.body) {
-      return badRequest(new MissinParamsError('body'))
-    } else if (!httpRequest.body?.name) {
-      return badRequest(new MissinParamsError('name'))
-    } else if (!httpRequest.body?.password) {
-      return badRequest(new MissinParamsError('password'))
+    const badRequestError = this.validadeRequiredFilds(httpRequest)
+    if (badRequestError) {
+      return badRequest(badRequestError)
     }
+
     return new Promise(resolve => resolve(null))
+  }
+
+  // @Helpers
+  private validadeRequiredFilds (request: HTTPRequest): Error {
+    const required = ['name', 'password']
+    for (const field of required) {
+      if (!request.body) {
+        return new MissinParamsError('body')
+      } else if (!request.body[field]) {
+        return new MissinParamsError(field)
+      }
+    }
   }
 }
