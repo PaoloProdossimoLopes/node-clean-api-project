@@ -1,3 +1,4 @@
+import { InternalServerError } from './../../errors/internal-server-error';
 import { InvalidParamError } from './../../errors/invalid-param-error';
 import { EmailValidatorStub } from './../helpers/EmailValidatorStub'
 import { MissinParamsError } from './../../errors/missin-params-error'
@@ -71,6 +72,20 @@ describe('LoginController', () => {
     const response = await sut.handle(request)
     expect(response.statusCode).toBe(400)
     expect(response.body).toEqual(new InvalidParamError('email'))
+  })
+
+  test('should returns 400 with invalid param error when email is invalid', async () => {
+    const { sut, validator } = makeEnviroment()
+    const request = {
+      body: {
+        password: 'any_valid_password',
+        email: 'any_invalid_email@mail.com'
+      }
+    }
+    validator.isValidThrows = new Error('any_internal_error')
+    const response = await sut.handle(request)
+    expect(response.statusCode).toBe(500)
+    expect(response.body).toEqual(new InternalServerError())
   })
 })
 
