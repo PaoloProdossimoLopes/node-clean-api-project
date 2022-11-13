@@ -3,7 +3,7 @@ import { LoginController } from './login'
 
 describe('LoginController', () => {
   test('should return 400 if no body is provided', async () => {
-    const sut = makeSUT()
+    const { sut } = makeEnviroment()
     const request = {
       body: null
     }
@@ -13,11 +13,9 @@ describe('LoginController', () => {
   })
 
   test('should return 400 if no `email` is provided', async () => {
-    const sut = makeSUT()
+    const { sut } = makeEnviroment()
     const request = {
-      body: {
-        password: 'any_valid_password'
-      }
+      body: { password: 'any_valid_password' }
     }
     const response = await sut.handle(request)
     expect(response.statusCode).toBe(400)
@@ -25,11 +23,9 @@ describe('LoginController', () => {
   })
 
   test('should return 400 if no `password` is provided', async () => {
-    const sut = makeSUT()
+    const { sut } = makeEnviroment()
     const request = {
-      body: {
-        email: 'any_valid_name'
-      }
+      body: { email: 'any_valid_email@mail.com' }
     }
     const response = await sut.handle(request)
     expect(response.statusCode).toBe(400)
@@ -37,7 +33,7 @@ describe('LoginController', () => {
   })
 
   test('should return 200 if all values are provided correctly', async () => {
-    const sut = makeSUT()
+    const { sut } = makeEnviroment()
     const request = {
       body: {
         password: 'any_valid_password',
@@ -49,6 +45,12 @@ describe('LoginController', () => {
   })
 })
 
-const makeSUT = (): LoginController => {
-  return new LoginController()
+interface Enviroment {
+  sut: LoginController
+}
+
+const makeEnviroment = (): Enviroment => {
+  return {
+    sut: new LoginController()
+  }
 }
