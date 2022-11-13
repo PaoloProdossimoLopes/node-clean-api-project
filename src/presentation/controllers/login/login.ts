@@ -1,3 +1,4 @@
+import { InvalidParamError } from './../../errors/invalid-param-error';
 import { IEmailValidator } from './../../protocols/email-validator'
 import { MissinParamsError } from './../../errors/missin-params-error'
 import { HTTPRequest, HTTPResponse } from '@/presentation/protocols'
@@ -13,11 +14,12 @@ export class LoginController implements IController {
 
   async handle (httpRequest: HTTPRequest): Promise<HTTPResponse> {
     const badRequestError = this.validadeRequiredFilds(httpRequest)
-    if (badRequestError) {
-      return badRequest(badRequestError)
-    }
+    if (badRequestError) { return badRequest(badRequestError) }
 
-    this.validator.isValid(httpRequest.body.email)
+    const isValid = this.validator.isValid(httpRequest.body.email)
+    if (!isValid) {
+      return badRequest(new InvalidParamError('email'))
+    }
 
     const successObject = {
       statusCode: 200,
