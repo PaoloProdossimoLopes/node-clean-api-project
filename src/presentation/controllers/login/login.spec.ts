@@ -1,4 +1,5 @@
-import { EmailValidatorStub } from './../helpers/EmailValidatorStub';
+import { InvalidParamError } from './../../errors/invalid-param-error';
+import { EmailValidatorStub } from './../helpers/EmailValidatorStub'
 import { MissinParamsError } from './../../errors/missin-params-error'
 import { LoginController } from './login'
 
@@ -56,6 +57,20 @@ describe('LoginController', () => {
     }
     await sut.handle(request)
     expect(validator.isValidEmailSpy).toBe(expected)
+  })
+
+  test('should returns 400 with invalid param error when email is invalid', async () => {
+    const { sut, validator } = makeEnviroment()
+    const request = {
+      body: {
+        password: 'any_valid_password',
+        email: 'any_invalid_email@mail.com'
+      }
+    }
+    validator.isValidExpected = false
+    const response = await sut.handle(request)
+    expect(response.statusCode).toBe(400)
+    expect(response.body).toEqual(new InvalidParamError('email'))
   })
 })
 
