@@ -1,3 +1,4 @@
+import { EmailValidatorStub } from './../helpers/EmailValidatorStub';
 import { MissinParamsError } from './../../errors/missin-params-error'
 import { LoginController } from './login'
 
@@ -43,14 +44,31 @@ describe('LoginController', () => {
     const response = await sut.handle(request)
     expect(response.statusCode).toBe(200)
   })
+
+  test('should call email validator with correct email', async () => {
+    const { sut, validator } = makeEnviroment()
+    const expected = 'any_valid_email@mail.com'
+    const request = {
+      body: {
+        password: 'any_valid_password',
+        email: expected
+      }
+    }
+    await sut.handle(request)
+    expect(validator.isValidEmailSpy).toBe(expected)
+  })
 })
 
 interface Enviroment {
   sut: LoginController
+  validator: EmailValidatorStub
 }
 
 const makeEnviroment = (): Enviroment => {
+  const validator = new EmailValidatorStub()
+  const sut = new LoginController(validator)
   return {
-    sut: new LoginController()
+    sut,
+    validator
   }
 }
