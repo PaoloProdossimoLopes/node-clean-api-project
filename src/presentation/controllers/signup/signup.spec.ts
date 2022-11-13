@@ -1,8 +1,8 @@
 import { SignUpController } from './signup'
-import { MissinParamsError, InternalServerError, InvalidParamError } from '../errors'
-import { IEmailValidator } from '../protocols'
-import { IAddAccount, AddAccountModel } from '../../domain/use-cases/add-account'
-import { IAccountModel } from '../../domain/models/account-model'
+import { MissinParamsError, InternalServerError, InvalidParamError } from '../../errors'
+import { IEmailValidator } from '../../protocols'
+import { IAddAccount, AddAccountModel } from '../../../domain/use-cases/add-account'
+import { IAccountModel } from '../../../domain/models/account-model'
 
 describe('SignUpController', () => {
   test('Should return 400 if no `nome` is provided', async () => {

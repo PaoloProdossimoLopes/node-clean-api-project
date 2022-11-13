@@ -1,8 +1,8 @@
 import { HTTPRequest } from './../../presentation/protocols/http'
-import { Controller } from './../../presentation/protocols/controller'
+import { IController } from './../../presentation/protocols/controller'
 import { Request, Response } from 'express'
 
-export const adapetRoute = (controller: Controller) => {
+export const adapetRoute = (controller: IController) => {
   return async (request: Request, response: Response) => {
     const httpRequest: HTTPRequest = {
       body: request.body

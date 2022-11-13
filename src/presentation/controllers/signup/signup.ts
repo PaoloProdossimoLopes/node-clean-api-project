@@ -1,9 +1,9 @@
-import { MissinParamsError, InvalidParamError } from '../errors'
-import { badRequest, internalServerError, ok } from '../helpers/http-helper'
-import { IEmailValidator, Controller, HTTPResponse, HTTPRequest } from '../protocols'
-import { IAddAccount } from '../../domain/use-cases/add-account'
+import { MissinParamsError, InvalidParamError } from '../../errors'
+import { badRequest, internalServerError, ok } from '../../helpers/http-helper'
+import { IEmailValidator, IController, HTTPResponse, HTTPRequest } from '../../protocols'
+import { IAddAccount } from '../../../domain/use-cases/add-account'
 
-export class SignUpController implements Controller {
+export class SignUpController implements IController {
   // @Properties
   private readonly emailValidator: IEmailValidator
   private readonly addAccount: IAddAccount
