@@ -19,7 +19,7 @@ export class LoginController implements IController {
 
   // @Helpers
   private validadeRequiredFilds (request: HTTPRequest): Error {
-    const required = ['name', 'password']
+    const required = ['email', 'password']
     for (const field of required) {
       if (!request.body) {
         return new MissinParamsError('body')
