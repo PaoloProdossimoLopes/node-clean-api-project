@@ -1,4 +1,6 @@
-import { InvalidParamError } from './../../errors/invalid-param-error';
+import { InternalServerError } from './../../errors/internal-server-error';
+import { internalServerError } from './../../helpers/http-helper';
+import { InvalidParamError } from './../../errors/invalid-param-error'
 import { IEmailValidator } from './../../protocols/email-validator'
 import { MissinParamsError } from './../../errors/missin-params-error'
 import { HTTPRequest, HTTPResponse } from '@/presentation/protocols'
@@ -13,19 +15,23 @@ export class LoginController implements IController {
   }
 
   async handle (httpRequest: HTTPRequest): Promise<HTTPResponse> {
-    const badRequestError = this.validadeRequiredFilds(httpRequest)
-    if (badRequestError) { return badRequest(badRequestError) }
+    try {
+      const badRequestError = this.validadeRequiredFilds(httpRequest)
+      if (badRequestError) { return badRequest(badRequestError) }
 
-    const isValid = this.validator.isValid(httpRequest.body.email)
-    if (!isValid) {
-      return badRequest(new InvalidParamError('email'))
-    }
+      const isValid = this.validator.isValid(httpRequest.body.email)
+      if (!isValid) {
+        return badRequest(new InvalidParamError('email'))
+      }
 
-    const successObject = {
-      statusCode: 200,
-      body: null
+      const successObject = {
+        statusCode: 200,
+        body: null
+      }
+      return successObject
+    } catch {
+      return internalServerError(new InternalServerError())
     }
-    return successObject
   }
 
   // @Helpers
