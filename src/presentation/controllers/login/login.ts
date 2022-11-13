@@ -10,7 +10,11 @@ export class LoginController implements IController {
       return badRequest(badRequestError)
     }
 
-    return new Promise(resolve => resolve(null))
+    const successObject = {
+      statusCode: 200,
+      body: null
+    }
+    return successObject
   }
 
   // @Helpers
