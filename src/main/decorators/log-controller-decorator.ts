@@ -1,12 +1,12 @@
 import { ILogger } from '../../data/protocols/logger'
-import { Controller } from './../../presentation/protocols/controller'
+import { IController } from './../../presentation/protocols/controller'
 import { HTTPRequest, HTTPResponse } from '@/presentation/protocols'
 
-export class LogControllerDecorator implements Controller {
-  private readonly controller: Controller
+export class LogControllerDecorator implements IController {
+  private readonly controller: IController
   private readonly repository: ILogger
 
-  constructor (controller: Controller, repository: ILogger) {
+  constructor (controller: IController, repository: ILogger) {
     this.controller = controller
     this.repository = repository
   }

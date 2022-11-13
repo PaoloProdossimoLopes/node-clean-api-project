@@ -1,7 +1,7 @@
 {
   "name": "clean-api-project",
   "version": "1.0.0",
-  "description": "DESCRIPTION ...",
+  "description": "NodeJS Rest API using TDD, clean architecture and Typescript",
   "main": "index.js",
   "scripts": {
     "start": "sucrase-node src/main/server.ts",

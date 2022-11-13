@@ -1,8 +1,8 @@
+import { EmailValidatorStub } from './../helpers/EmailValidatorStub'
 import { SignUpController } from './signup'
-import { MissinParamsError, InternalServerError, InvalidParamError } from '../errors'
-import { IEmailValidator } from '../protocols'
-import { IAddAccount, AddAccountModel } from '../../domain/use-cases/add-account'
-import { IAccountModel } from '../../domain/models/account-model'
+import { MissinParamsError, InternalServerError, InvalidParamError } from '../../errors'
+import { IAddAccount, AddAccountModel } from '../../../domain/use-cases/add-account'
+import { IAccountModel } from '../../../domain/models/account-model'
 
 describe('SignUpController', () => {
   test('Should return 400 if no `nome` is provided', async () => {
@@ -239,21 +239,5 @@ class AddAccountStub implements IAddAccount {
     }
 
     return new Promise(resolve => resolve(this.addAccountModel))
-  }
-}
-
-class EmailValidatorStub implements IEmailValidator {
-  isValidExpected: boolean = true
-  isValidEmailSpy?: string
-  isValidThrows?: Error
-
-  isValid (email: string): boolean {
-    this.isValidEmailSpy = email
-
-    if (this.isValidThrows) {
-      throw this.isValidThrows
-    }
-
-    return this.isValidExpected
   }
 }

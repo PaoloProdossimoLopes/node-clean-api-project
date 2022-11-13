@@ -2,7 +2,7 @@ import { InternalServerError } from './../../presentation/errors/internal-server
 import { ILogger } from '../../data/protocols/logger'
 import { LogControllerDecorator } from './log-controller-decorator'
 import { HTTPRequest, HTTPResponse } from '@/presentation/protocols'
-import { Controller } from './../../presentation/protocols/controller'
+import { IController } from './../../presentation/protocols/controller'
 
 describe('LogControllerDecorator', () => {
   test('should call handle method', async () => {
@@ -56,7 +56,7 @@ const makeHTTPRequest = ((): HTTPRequest => {
 })
 
 // @Test Doubles
-class ControllerSpy implements Controller {
+class ControllerSpy implements IController {
   httpRequestRecieveds: HTTPRequest[] = []
   errorExpecetd?: Error
   statusCodeExpected: number = 0
