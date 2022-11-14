@@ -1,3 +1,4 @@
+import { unauthorizedError } from './../../helpers/http-helper'
 import { IToken } from './../../../domain/use-cases/authentication/token'
 import { InternalServerError } from './../../errors/internal-server-error'
 import { InvalidParamError } from './../../errors/invalid-param-error'
@@ -90,6 +91,19 @@ describe('LoginController', () => {
     expect(response.body).toEqual(new InternalServerError())
   })
 
+  test('should return 401 if invalid credentions are provided', async () => {
+    const { sut, authenticator } = makeEnviroment()
+    const request = {
+      body: {
+        password: 'any_valid_password',
+        email: 'any_invalid_email@mail.com'
+      }
+    }
+    authenticator.authReturnExpected = null
+    const resposne = await sut.handle(request)
+    expect(resposne).toEqual(unauthorizedError())
+  })
+
   test('should call authentication with correct values', async () => {
     const { sut, authenticator } = makeEnviroment()
     const request = {
@@ -101,6 +115,18 @@ describe('LoginController', () => {
     await sut.handle(request)
     expect(authenticator.emailParamSpy).toEqual(request.body.email)
     expect(authenticator.passwordParamSpy).toEqual(request.body.password)
+  })
+
+  test('should return 200 if valid credential are provided', async () => {
+    const { sut, authenticator } = makeEnviroment()
+    const request = {
+      body: {
+        password: 'any_valid_password',
+        email: 'any_invalid_email@mail.com'
+      }
+    }
+    const response = sut.handle(request)
+    expect(response).toEqual({ accessToken: authenticator.authReturnExpected })
   })
 })
 
@@ -124,10 +150,11 @@ const makeEnviroment = (): Enviroment => {
 class AuthenticatorSpy implements IAuthentication {
   emailParamSpy?: string
   passwordParamSpy?: string
+  authReturnExpected?: IToken = { token: 'any_token' }
 
   async auth (email: string, password: string): Promise<IToken> {
     this.emailParamSpy = email
     this.passwordParamSpy = password
-    return { token: 'any_token' }
+    return this.authReturnExpected
   }
 }
