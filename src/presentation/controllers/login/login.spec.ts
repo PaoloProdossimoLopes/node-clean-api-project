@@ -1,8 +1,10 @@
-import { InternalServerError } from './../../errors/internal-server-error';
-import { InvalidParamError } from './../../errors/invalid-param-error';
+import { IToken } from './../../../domain/use-cases/authentication/token'
+import { InternalServerError } from './../../errors/internal-server-error'
+import { InvalidParamError } from './../../errors/invalid-param-error'
 import { EmailValidatorStub } from './../helpers/EmailValidatorStub'
 import { MissinParamsError } from './../../errors/missin-params-error'
 import { LoginController } from './login'
+import { IAuthentication } from '@/domain/use-cases/authentication/authenticator'
 
 describe('LoginController', () => {
   test('should return 400 if no body is provided', async () => {
@@ -87,18 +89,45 @@ describe('LoginController', () => {
     expect(response.statusCode).toBe(500)
     expect(response.body).toEqual(new InternalServerError())
   })
+
+  test('should call authentication with correct values', async () => {
+    const { sut, authenticator } = makeEnviroment()
+    const request = {
+      body: {
+        password: 'any_valid_password',
+        email: 'any_invalid_email@mail.com'
+      }
+    }
+    await sut.handle(request)
+    expect(authenticator.emailParamSpy).toEqual(request.body.email)
+    expect(authenticator.passwordParamSpy).toEqual(request.body.password)
+  })
 })
 
 interface Enviroment {
   sut: LoginController
   validator: EmailValidatorStub
+  authenticator: AuthenticatorSpy
 }
 
 const makeEnviroment = (): Enviroment => {
   const validator = new EmailValidatorStub()
-  const sut = new LoginController(validator)
+  const authenticator = new AuthenticatorSpy()
+  const sut = new LoginController(validator, authenticator)
   return {
     sut,
-    validator
+    validator,
+    authenticator
+  }
+}
+
+class AuthenticatorSpy implements IAuthentication {
+  emailParamSpy?: string
+  passwordParamSpy?: string
+
+  async auth (email: string, password: string): Promise<IToken> {
+    this.emailParamSpy = email
+    this.passwordParamSpy = password
+    return { token: 'any_token' }
   }
 }
