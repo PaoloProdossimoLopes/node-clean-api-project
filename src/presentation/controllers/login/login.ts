@@ -1,4 +1,5 @@
-import { InternalServerError } from './../../errors/internal-server-error';
+import { IAuthentication } from './../../../domain/use-cases/authentication/authenticator'
+import { InternalServerError } from './../../errors/internal-server-error'
 import { internalServerError } from './../../helpers/http-helper'
 import { InvalidParamError } from './../../errors/invalid-param-error'
 import { IEmailValidator } from './../../protocols/email-validator'
@@ -9,9 +10,11 @@ import { badRequest } from '../../helpers/http-helper'
 
 export class LoginController implements IController {
   private readonly validator: IEmailValidator
+  private readonly authenticator: IAuthentication
 
-  constructor (validator: IEmailValidator) {
+  constructor (validator: IEmailValidator, authenticator: IAuthentication) {
     this.validator = validator
+    this.authenticator = authenticator
   }
 
   async handle (httpRequest: HTTPRequest): Promise<HTTPResponse> {
@@ -23,6 +26,8 @@ export class LoginController implements IController {
       if (!isValid) {
         return badRequest(new InvalidParamError('email'))
       }
+
+      await this.authenticator.auth(httpRequest.body.email, httpRequest.body.password)
 
       const successObject = {
         statusCode: 200,
