@@ -6,7 +6,7 @@ import { IEmailValidator } from './../../protocols/email-validator'
 import { MissinParamsError } from './../../errors/missin-params-error'
 import { HTTPRequest, HTTPResponse } from '@/presentation/protocols'
 import { IController } from './../../protocols/controller'
-import { badRequest } from '../../helpers/http-helper'
+import { badRequest, unauthorizedError, ok } from '../../helpers/http-helper'
 
 export class LoginController implements IController {
   private readonly validator: IEmailValidator
@@ -27,13 +27,12 @@ export class LoginController implements IController {
         return badRequest(new InvalidParamError('email'))
       }
 
-      await this.authenticator.auth(httpRequest.body.email, httpRequest.body.password)
-
-      const successObject = {
-        statusCode: 200,
-        body: null
+      const accessToken = await this.authenticator.auth(httpRequest.body.email, httpRequest.body.password)
+      if (!accessToken?.token) {
+        return unauthorizedError()
       }
-      return successObject
+
+      return ok({ accessToken })
     } catch {
       return internalServerError(new InternalServerError())
     }
