@@ -1,3 +1,4 @@
+import { IValidator } from './validator'
 import { MissinParamsError, InvalidParamError } from '../../errors'
 import { badRequest, internalServerError, ok } from '../../helpers/http-helper'
 import { IEmailValidator, IController, HTTPResponse, HTTPRequest } from '../../protocols'
@@ -7,11 +8,13 @@ export class SignUpController implements IController {
   // @Properties
   private readonly emailValidator: IEmailValidator
   private readonly addAccount: IAddAccount
+  private readonly validator: IValidator
 
   // @Constructor
-  constructor (emailValidator: IEmailValidator, addAccount: IAddAccount) {
+  constructor (emailValidator: IEmailValidator, addAccount: IAddAccount, validator: IValidator) {
     this.emailValidator = emailValidator
     this.addAccount = addAccount
+    this.validator = validator
   }
 
   // @Internals
@@ -27,6 +30,8 @@ export class SignUpController implements IController {
     if (missingParamError) {
       return badRequest(missingParamError)
     }
+
+    await this.validator.validate(request.body)
 
     const { name, email, password, passwordConfirmation } = request.body
     if (!this.emailValidator.isValid(email)) {
