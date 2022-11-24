@@ -1,3 +1,4 @@
+import { badRequest } from './../../helpers/http-helper'
 import { IValidator } from './validator'
 import { EmailValidatorStub } from './../helpers/EmailValidatorStub'
 import { SignUpController } from './signup'
@@ -195,6 +196,14 @@ describe('SignUpController', () => {
 
     await sut.handle(request)
     expect(validator.validateCalledWith).toEqual(request.body)
+  })
+
+  test('should return 400 if validator returns an error', async () => {
+    const { sut, validator } = makeSUT()
+    const error = new MissinParamsError('any_migssing_param_error')
+    validator.returnsError = error
+    const response = await sut.handle({})
+    expect(response).toEqual(badRequest(error))
   })
 })
 
