@@ -125,8 +125,8 @@ describe('LoginController', () => {
         email: 'any_invalid_email@mail.com'
       }
     }
-    const response = sut.handle(request)
-    expect(response).toEqual({ accessToken: authenticator.authReturnExpected })
+    const response = await sut.handle(request)
+    expect(response.body).toEqual({ accessToken: authenticator.authReturnExpected })
   })
 })
 
