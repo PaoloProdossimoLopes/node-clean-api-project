@@ -1,3 +1,4 @@
+import { IValidator } from './validator'
 import { EmailValidatorStub } from './../helpers/EmailValidatorStub'
 import { SignUpController } from './signup'
 import { MissinParamsError, InternalServerError, InvalidParamError } from '../../errors'
@@ -180,22 +181,40 @@ describe('SignUpController', () => {
     expect(response.statusCode).toEqual(200)
     expect(response.body).toEqual(expectedModel)
   })
+
+  test('should call `Validation` with correct value', async () => {
+    const { sut, validator } = makeSUT()
+    const request = {
+      body: {
+        name: makeValidName(),
+        email: makeValidEmail(),
+        password: makeValidPassword(),
+        passwordConfirmation: makeValidPassword()
+      }
+    }
+
+    await sut.handle(request)
+    expect(validator.validateCalledWith).toEqual(request.body)
+  })
 })
 
 interface TestDependencies {
   sut: SignUpController
   emailValidator: EmailValidatorStub
   addAccount: AddAccountStub
+  validator: ValidatorSpy
 }
 
 const makeSUT = (): TestDependencies => {
   const emailValidator = makeEmailValidator()
   const addAccount = makeAddAccount()
-  const sut = new SignUpController(emailValidator, addAccount)
+  const validator = new ValidatorSpy()
+  const sut = new SignUpController(emailValidator, addAccount, validator)
   return {
     sut,
     emailValidator,
-    addAccount
+    addAccount,
+    validator
   }
 }
 
@@ -239,5 +258,15 @@ class AddAccountStub implements IAddAccount {
     }
 
     return new Promise(resolve => resolve(this.addAccountModel))
+  }
+}
+
+class ValidatorSpy implements IValidator {
+  validateCalledWith?: any
+  returnsError?: Error
+
+  async validate (body: any): Promise<Error> {
+    this.validateCalledWith = body
+    return this.returnsError
   }
 }
