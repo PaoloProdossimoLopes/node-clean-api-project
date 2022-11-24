@@ -26,12 +26,15 @@ export class SignUpController implements IController {
 
   // @Helpers
   private async onHandler (request: HTTPRequest): Promise<HTTPResponse> {
+    const validationError = await this.validator.validate(request.body)
+    if (validationError) {
+      return badRequest(validationError)
+    }
+
     const missingParamError = this.checkRequiredFields(request.body)
     if (missingParamError) {
       return badRequest(missingParamError)
     }
-
-    await this.validator.validate(request.body)
 
     const { name, email, password, passwordConfirmation } = request.body
     if (!this.emailValidator.isValid(email)) {
