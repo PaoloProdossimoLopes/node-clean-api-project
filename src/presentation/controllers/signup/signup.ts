@@ -1,18 +1,16 @@
 import { IValidator } from './validator'
-import { MissinParamsError, InvalidParamError } from '../../errors'
+import { MissinParamsError } from '../../errors'
 import { badRequest, internalServerError, ok } from '../../helpers/http-helper'
-import { IEmailValidator, IController, HTTPResponse, HTTPRequest } from '../../protocols'
+import { IController, HTTPResponse, HTTPRequest } from '../../protocols'
 import { IAddAccount } from '../../../domain/use-cases/add-account'
 
 export class SignUpController implements IController {
   // @Properties
-  private readonly emailValidator: IEmailValidator
   private readonly addAccount: IAddAccount
   private readonly validator: IValidator
 
   // @Constructor
-  constructor (emailValidator: IEmailValidator, addAccount: IAddAccount, validator: IValidator) {
-    this.emailValidator = emailValidator
+  constructor (addAccount: IAddAccount, validator: IValidator) {
     this.addAccount = addAccount
     this.validator = validator
   }
@@ -31,19 +29,7 @@ export class SignUpController implements IController {
       return badRequest(validationError)
     }
 
-    const missingParamError = this.checkRequiredFields(request.body)
-    if (missingParamError) {
-      return badRequest(missingParamError)
-    }
-
-    const { name, email, password, passwordConfirmation } = request.body
-    if (!this.emailValidator.isValid(email)) {
-      return badRequest(new InvalidParamError(this.Constant.email))
-    }
-
-    if (!this.comparePasswords(password, passwordConfirmation)) {
-      return badRequest(new InvalidParamError(this.Constant.passwordConfirmation))
-    }
+    const { name, email, password } = request.body
 
     const shortHandSyntaxData = { name, email, password }
     const accountModel = await this.addAccount.add(shortHandSyntaxData)

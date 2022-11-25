@@ -1,3 +1,4 @@
+import { makeCompositeValidator } from './sign-up-validator';
 import { MongoLogResponsitory } from './../../infra/db/mongodb/logger-repository'
 import { IController } from './../../presentation/protocols/controller'
 import { AccountMongoRepository } from './../../infra/db/mongodb/account-repository/account'
@@ -10,9 +11,9 @@ import { LogControllerDecorator } from '../decorators/log-controller-decorator'
 export const makeSignUpController = (): IController => {
   const repository = new AccountMongoRepository()
   const encrypter = new BCryptAdapter()
-  const validator = new EmailValiadatorAdapter()
   const account = new DBAddAccount(encrypter, repository)
-  const controller = new SignUpController(validator, account)
+  const validator = makeCompositeValidator()
+  const controller = new SignUpController(account, validator)
   const loggerRepository = new MongoLogResponsitory()
   const logDecorator = new LogControllerDecorator(controller, loggerRepository)
   return logDecorator

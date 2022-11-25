@@ -1,101 +1,14 @@
 import { badRequest } from './../../helpers/http-helper'
 import { IValidator } from './validator'
-import { EmailValidatorStub } from './../helpers/EmailValidatorStub'
 import { SignUpController } from './signup'
-import { MissinParamsError, InternalServerError, InvalidParamError } from '../../errors'
+import { MissinParamsError, InternalServerError } from '../../errors'
 import { IAddAccount, AddAccountModel } from '../../../domain/use-cases/add-account'
 import { IAccountModel } from '../../../domain/models/account-model'
 
 describe('SignUpController', () => {
-  test('Should return 400 if no `nome` is provided', async () => {
-    const { sut } = makeSUT()
-    const httpRequest = {
-      body: {
-        email: makeValidEmail(),
-        password: makeValidPassword(),
-        passwordConfirmation: makeValidPassword()
-      }
-    }
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new MissinParamsError('name'))
-  })
-
-  test('Should return 400 if no `email` is provided', async () => {
-    const { sut } = makeSUT()
-    const httpRequest = {
-      body: {
-        name: makeValidName(),
-        password: makeValidPassword(),
-        passwordConfirmation: makeValidPassword()
-      }
-    }
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new MissinParamsError('email'))
-  })
-
-  test('Should return 400 if no `password` is provided', async () => {
-    const { sut } = makeSUT()
-    const httpRequest = {
-      body: {
-        email: makeValidEmail(),
-        name: makeValidName(),
-        passwordConfirmation: makeValidPassword()
-      }
-    }
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new MissinParamsError('password'))
-  })
-
-  test('Should return 400 if no `passwordConfirmation` is provided', async () => {
-    const { sut } = makeSUT()
-    const httpRequest = {
-      body: {
-        email: makeValidEmail(),
-        name: makeValidName(),
-        password: makeValidPassword()
-      }
-    }
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new MissinParamsError('passwordConfirmation'))
-  })
-
-  test('Should return 400 if an invalid email is provided', async () => {
-    const { sut, emailValidator } = makeSUT()
-    const httpRequest = {
-      body: {
-        name: makeValidName(),
-        email: makeInvalidEmail(),
-        password: makeValidPassword(),
-        passwordConfirmation: makeValidPassword()
-      }
-    }
-    await sut.handle(httpRequest)
-    expect(emailValidator.isValidEmailSpy).toEqual(makeInvalidEmail())
-  })
-
-  test('Should call `isValid` with correct email', async () => {
-    const { sut, emailValidator } = makeSUT()
-    emailValidator.isValidExpected = false
-    const httpRequest = {
-      body: {
-        name: makeValidName(),
-        email: makeValidEmail(),
-        password: makeValidPassword(),
-        passwordConfirmation: makeValidPassword()
-      }
-    }
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new InvalidParamError('email'))
-  })
-
   test('Should response with statusCode 500 when Validator give us a throws with InternalServerError type', async () => {
-    const { sut, emailValidator } = makeSUT()
-    emailValidator.isValidThrows = new InternalServerError()
+    const { sut, validator } = makeSUT()
+    validator.throws = new InternalServerError('any_error')
     const httpRequest = {
       body: {
         name: makeValidName(),
@@ -107,21 +20,6 @@ describe('SignUpController', () => {
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toBeInstanceOf(InternalServerError)
-  })
-
-  test('Should return 400 if password confirmation fails', async () => {
-    const { sut } = makeSUT()
-    const httpRequest = {
-      body: {
-        name: makeValidName(),
-        email: makeValidEmail(),
-        password: makeValidPassword(),
-        passwordConfirmation: makeInvalidPassword()
-      }
-    }
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new InvalidParamError('passwordConfirmation'))
   })
 
   test('When all field are valid should calls `add` method with correct datas', async () => {
@@ -209,27 +107,20 @@ describe('SignUpController', () => {
 
 interface TestDependencies {
   sut: SignUpController
-  emailValidator: EmailValidatorStub
   addAccount: AddAccountStub
   validator: ValidatorSpy
 }
 
 const makeSUT = (): TestDependencies => {
-  const emailValidator = makeEmailValidator()
   const addAccount = makeAddAccount()
   const validator = new ValidatorSpy()
-  const sut = new SignUpController(emailValidator, addAccount, validator)
+  const sut = new SignUpController(addAccount, validator)
   return {
     sut,
-    emailValidator,
     addAccount,
     validator
   }
 }
-
-const makeEmailValidator = ((): EmailValidatorStub => {
-  return new EmailValidatorStub()
-})
 
 const makeAddAccount = ((): AddAccountStub => {
   return new AddAccountStub()
@@ -245,8 +136,6 @@ const makeValidEmail = (): string => 'any_valid_email@mail.com'
 const makeInvalidEmail = (): string => 'any_invalid_email@mail.com'
 
 const makeValidPassword = (): string => 'any_valid_password'
-
-const makeInvalidPassword = (): string => 'any_invalid_password'
 
 // @Test Doubles
 class AddAccountStub implements IAddAccount {
@@ -273,9 +162,13 @@ class AddAccountStub implements IAddAccount {
 class ValidatorSpy implements IValidator {
   validateCalledWith?: any
   returnsError?: Error
+  throws?: Error
 
   async validate (body: any): Promise<Error> {
     this.validateCalledWith = body
+    if (this.throws) {
+      throw this.throws
+    }
     return this.returnsError
   }
 }
