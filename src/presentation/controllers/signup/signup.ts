@@ -1,5 +1,4 @@
 import { IValidator } from './validator'
-import { MissinParamsError } from '../../errors'
 import { badRequest, internalServerError, ok } from '../../helpers/http-helper'
 import { IController, HTTPResponse, HTTPRequest } from '../../protocols'
 import { IAddAccount } from '../../../domain/use-cases/add-account'
@@ -34,27 +33,5 @@ export class SignUpController implements IController {
     const shortHandSyntaxData = { name, email, password }
     const accountModel = await this.addAccount.add(shortHandSyntaxData)
     return ok(accountModel)
-  }
-
-  private comparePasswords (password: string, confirmation: string): boolean {
-    return password === confirmation
-  }
-
-  private checkRequiredFields (body?: any): Error {
-    const requiredFields = [
-      this.Constant.name, this.Constant.email,
-      this.Constant.password, this.Constant.passwordConfirmation
-    ]
-    for (const field of requiredFields) {
-      if (!body[field]) { return new MissinParamsError(field) }
-    }
-  }
-
-  // @Constants
-  private readonly Constant = {
-    name: 'name',
-    email: 'email',
-    password: 'password',
-    passwordConfirmation: 'passwordConfirmation'
   }
 }
